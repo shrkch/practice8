@@ -1,0 +1,13 @@
+digraph C {
+graph [rankdir=TB, bgcolor="white", pad=0.3, nodesep=0.5, ranksep=0.6, dpi=240];
+node [shape=record, style="filled", fontname="Times New Roman", fontsize=10, color="#2F5597", fillcolor="#F7FBFF"];
+edge [fontname="Times New Roman", fontsize=9, color="#555555"];
+sc [label="{SelfCheck||+ main(String[]) void\l- runDataDriven(String) void\l- runInteractive() void\l}"];
+sv [label="{BusinessTripService|- trips List[BusinessTrip]\l|+ create(String, String, LocalDate, LocalDate) BusinessTrip\l+ submit(String) void\l+ findByStatus(TripStatus) List[BusinessTrip]\l+ findById(String) BusinessTrip\l+ findAll() List[BusinessTrip]\l+ addActiveTripsCount(BusinessTripService) int \{static\}\l- requireNoActiveTrip(String, String) void\l}"];
+t [label="{BusinessTrip|+ MIN_REASON_LENGTH: int = 10 \{readOnly\}\l- id String \{final\}\l- employee String \{final\}\l- start LocalDate \{final\}\l- end LocalDate \{final\}\l- status TripStatus = DRAFT\l- rejectionReason String\l|+ BusinessTrip(String, LocalDate, LocalDate)\l+ BusinessTrip(String, String, LocalDate, LocalDate)\l+ submit() void\l+ approve() void\l+ reject(String) void\l+ cancel() void\l+ complete(LocalDate) void\l+ isActive() boolean\l+ getId() String\l+ getEmployee() String\l+ getStart() LocalDate\l+ getEnd() LocalDate\l+ getStatus() TripStatus\l+ getRejectionReason() String\l- requireStatus(TripStatus, TripStatus) void\l- isTerminal() boolean\l- transitionError(TripStatus) IllegalStateException\l}"];
+st [label="{«enumeration»\nTripStatus|DRAFT\lSUBMITTED\lAPPROVED\lREJECTED\lCANCELLED\lCOMPLETED\l}"];
+sc -> sv [label="tests", style=dashed, arrowhead=open];
+sc -> t [label="tests", style=dashed, arrowhead=open];
+sv -> t [label="creates, 0..*", arrowtail=odiamond, dir=both];
+t -> st [label="1", arrowhead=open];
+}

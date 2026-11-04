@@ -1,0 +1,25 @@
+id;start;end;action;expected
+# === Корректные заявки ===
+T-01;2026-10-10;2026-10-12;SUBMIT;OK:status=SUBMITTED
+T-02;2026-10-15;2026-10-20;SUBMIT;OK:status=SUBMITTED
+T-03;2026-10-01;2026-10-05;SUBMIT;OK:status=SUBMITTED
+# === Ошибка конструктора: start > end ===
+T-04;2026-10-12;2026-10-10;SUBMIT;SKIP:start must be <= end
+# === Ошибка конструктора: id пустой ===
+;2026-10-10;2026-10-12;SUBMIT;SKIP:id is null or blank
+# === Различные действия (предполагается DRAFT → действие) ===
+T-05;2026-10-10;2026-10-12;SUBMIT;OK:status=SUBMITTED
+T-06;2026-10-10;2026-10-12;APPROVE;ERROR:IllegalStateException
+T-07;2026-10-10;2026-10-12;REJECT;ERROR:IllegalStateException
+T-08;2026-10-10;2026-10-12;CANCEL;OK:status=CANCELLED
+T-09;2026-10-10;2026-10-12;COMPLETE;ERROR:IllegalStateException
+# === Цепочки переходов через «>» ===
+T-10;2026-10-10;2026-10-12;SUBMIT>APPROVE>COMPLETE;OK:status=COMPLETED
+T-11;2026-10-10;2026-10-12;SUBMIT>REJECT:Нет;ERROR:IllegalArgumentException
+T-12;2026-10-10;2026-10-12;SUBMIT>APPROVE>COMPLETE:2026-10-11;ERROR:IllegalStateException
+# === Вариант 26: заявки через сервис, у сотрудника одна активная командировка ===
+V-01;2026-11-10;2026-11-12;CREATE:Ivanov>SUBMIT;OK:status=SUBMITTED
+V-02;2026-11-20;2026-11-22;CREATE:Ivanov;ERROR:IllegalStateException
+V-03;2026-11-20;2026-11-22;CREATE:Petrov>SUBMIT>APPROVE;OK:status=APPROVED
+V-04;2026-12-01;2026-12-03;CREATE:Sidorov;OK:status=DRAFT
+COUNT;;;ACTIVE_COUNT;OK:count=2

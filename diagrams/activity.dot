@@ -1,0 +1,27 @@
+digraph G {
+graph [rankdir=TB, bgcolor="white", pad=0.3, nodesep=0.6, ranksep=0.55, dpi=200];
+node [shape=box, style="rounded,filled", fontname="Times New Roman", fontsize=12, color="#2F5597", fillcolor="#EAF2F8", margin="0.18,0.10"];
+edge [fontname="Times New Roman", fontsize=10, color="#555555"];
+start [label="Начало", shape=oval, fillcolor="#E2F0D9", color="#548235"];
+create [label="Создать заявку: new BusinessTrip(id, start, end)\nили service.create(id, сотрудник, start, end)", shape=parallelogram, fillcolor="#E4DFEC", color="#7030A0"];
+err [label="Объект не создан: IllegalArgumentException (R1, R2)\nили IllegalStateException (вариант 26)"];
+DRAFT [label="DRAFT\nчерновик"];
+SUBMITTED [label="SUBMITTED\nна согласовании"];
+APPROVED [label="APPROVED\nодобрена"];
+REJECTED [label="REJECTED\nотклонена (терминальное)", fillcolor="#FCE4D6", color="#C65911"];
+CANCELLED [label="CANCELLED\nотменена (терминальное)", fillcolor="#FCE4D6", color="#C65911"];
+COMPLETED [label="COMPLETED\nзавершена (терминальное)", fillcolor="#FCE4D6", color="#C65911"];
+end [label="Завершение", shape=oval, fillcolor="#FCE4D6", color="#C65911"];
+start -> create;
+create -> DRAFT [label=" R1: id не null и не пустой\l R2: start, end не null, start <= end\l Вариант 26: у сотрудника нет\l SUBMITTED / APPROVED заявки\l"];
+create -> err [label=" нарушено", style=dashed];
+DRAFT -> SUBMITTED [label=" submit()\l R3: только из DRAFT\l Вариант 26: service.submit —\l нет другой активной заявки\l"];
+DRAFT -> CANCELLED [label=" cancel()\l R7\l"];
+SUBMITTED -> APPROVED [label=" approve()\l R5: только из SUBMITTED\l"];
+SUBMITTED -> REJECTED [label=" reject(reason)\l R5; R6: длина >= 10\l"];
+SUBMITTED -> CANCELLED [label=" cancel()\l R7\l"];
+APPROVED -> COMPLETED [label=" complete(today)\l R8: только из APPROVED\l R9: today >= end\l"];
+APPROVED -> CANCELLED [label=" cancel()\l R7\l"];
+REJECTED -> end; CANCELLED -> end; COMPLETED -> end; err -> end;
+{rank=same; REJECTED; CANCELLED; COMPLETED;}
+}
